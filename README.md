@@ -9,3 +9,13 @@ Bisogna generarlo, configurarlo ed avviare la migration base
 
 vendor/bin/phpunit --filter testConnection tests/Unit/CheckDBTest.php
 
+## Lista esercizi
+
+\App\Exercise\One
+vendor/bin/phpunit --filter testExercise tests/Unit/ExerciseOneTest.php
+
+\App\Exercise\Two
+vendor/bin/phpunit --filter testExercise tests/Unit/ExerciseTwoTest.php
+
+\App\Exercise\Three
+vendor/bin/phpunit --filter testExercise tests/Unit/ExerciseThreeTest.php

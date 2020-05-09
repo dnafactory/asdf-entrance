@@ -1,0 +1,122 @@
+version: "3.3"
+
+services:
+  asd:
+    image: dnafactory/mariadb
+    volumes:
+      - dumps:/var/backups
+      - databases:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MARIADB_ENTRYPOINT_INITDB=${MARIADB_ENTRYPOINT_INITDB}
+    ports:
+      - "${MYSQL_PORT_BINDED}:3306"
+    networks:
+      - backend
+
+  phpmyadmin:
+    image: dnafactory/phpmyadmin
+    environment:
+      - PMA_HOST=asd
+    ports:
+      - "${PHPMYADMIN_WEB_PORT}:80"
+    networks:
+      - backend
+      - frontend
+
+  machine:
+    image: dnafactory/machine
+    volumes:
+      - apps:/var/www
+      - sites:/etc/nginx/sites-enabled
+      - logs:/var/log
+    ports:
+      - "${SSH_PORT22}:22"
+      - "${NGINX_PORT80}:80"
+      - "${NGINX_PORT443}:443"
+    tty: true
+    networks:
+      - backend
+      - frontend
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - "${ELASTIC_PORT9200}:9200"
+    networks:
+      - frontend
+      - backend
+
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - frontend
+      - backend
+
+  redis:
+    image: 'redis:latest'
+    command: ["redis-server", "--appendonly", "yes"]
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '${REDIS_PORT6379}:6379'
+    volumes:
+      - redis:/bitnami/redis/data
+    networks:
+      - frontend
+      - backend
+
+  rabbit:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "${RABBIT_PORT15672}:15672"
+      - "${RABBIT_PORT5672}:5672"
+    networks:
+      - backend
+
+volumes:
+  apps:
+  sites:
+  logs:
+  dumps:
+  databases:
+  esdata1:
+  esdata2:
+  rabbitmqdata:
+  redis:
+
+networks:
+  frontend:
+    driver: "bridge"
+  backend:
+    driver: "bridge"

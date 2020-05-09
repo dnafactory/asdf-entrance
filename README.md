@@ -19,3 +19,12 @@ vendor/bin/phpunit --filter testExercise tests/Unit/ExerciseTwoTest.php
 
 \App\Exercise\Three
 vendor/bin/phpunit --filter testExercise tests/Unit/ExerciseThreeTest.php
+
+\App\Exercise\Four
+vendor/bin/phpunit --filter testExercise tests/Unit/ExerciseFourTest.php
+
+\App\Exercise\Five
+vendor/bin/phpunit --filter testExercise tests/Unit/ExerciseFiveTest.php
+
+\App\Exercise\Six
+vendor/bin/phpunit --filter testExercise tests/Unit/ExerciseSixTest.php

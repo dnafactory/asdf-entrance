@@ -1,9 +1,9 @@
 {
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Test d'ingresso numero 1",
     "keywords": [
-        "framework",
+        "TestIngresso",
         "laravel"
     ],
     "license": "MIT",
